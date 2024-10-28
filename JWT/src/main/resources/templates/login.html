@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login Page</h1>
+    <form id="loginForm" action="/api/auth/login" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit">Login</button>
+        <a href="/register.do">Register</a>
+    </form>
+
+    <script>
+
+ 
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error === 'accessDenied') {
+        alert('권한 없음');
+    }
+    
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data),
+                credentials: 'include' // 쿠키를 요청에 포함
+            });
+
+            if (response.ok) {
+                console.log('Login successful');
+                // 응답으로부터 리디렉션 URL을 받아서 리디렉션
+                const redirectUrl = await response.text(); // 서버가 리디렉션 URL을 응답으로 보내야 함
+                window.location.href = redirectUrl;
+            } else {
+                const errorText = await response.text();
+                console.error('Login failed:', errorText);
+                alert('Login failed: ' + errorText); // 로그인 실패 알림
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error occurred during login');
+        }
+    });
+
+    </script>
+</body>
+</html>

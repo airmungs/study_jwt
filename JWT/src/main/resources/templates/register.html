@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    <h2>Register</h2>
+    <form id="registerForm">
+    	<select id="role" name="role" required="required">
+    		<option value="distribution partner">distribution partner</option>
+    		<option value="production partner">production partner</option>
+    		<option value="sales partner">sales partner</option>
+    	</select>
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+    </form>
+    <script>
+        document.getElementById('registerForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    role: document.getElementById("role").value
+                })
+            });
+            const result = await response.text();
+            alert(result);
+        }
+    </script>
+</body>
+</html>
+                
